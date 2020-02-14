@@ -11,8 +11,8 @@ for loop: 25
 System.arrayCopy: 14
 
 
-Arraylist, Strings.copyValueOf(), .toCharArray(), Arrays.copyOf(), all internally uses System.arrayCopy ( which is native implementation,
-implemented in a library provided by JVM) ( probably memcpy, memove)
+Arraylist, Strings.copyValueOf(), .toCharArray(), Arrays.copyOf(), Arrays.copyOfRange() all internally uses System.arrayCopy
+( which is native implementation, implemented in a library provided by JVM) ( probably memcpy, memove)
 
 System.arrayCopy Time complexity: o(n), where n is number of elements to be copied, source array's size
 
