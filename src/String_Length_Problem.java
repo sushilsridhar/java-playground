@@ -16,10 +16,6 @@ public class String_Length_Problem {
 
         System.out.println(b.codePointAt(1));
         System.out.println(b.codePointCount(0, b.length())); // returns correct length
-
-
-        //System.out.println(1/10);
-
     }
 
 }
