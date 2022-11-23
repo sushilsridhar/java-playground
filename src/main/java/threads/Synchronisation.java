@@ -12,7 +12,7 @@ public class Synchronisation {
 
 
         /*
-            TODO
+            TODO lock monitor sync mutex
             syncWait1 and syncWait2 acquires a lock on task1 object, they can't run parallely
             syncWait1 and syncWait2 acquires a lock on task2 object, they can't run parallely
 
