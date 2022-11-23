@@ -15,14 +15,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class FanOutFanIn {
     public static void main(String[] args) throws InterruptedException {
-        //new FanOutFanInJob(50, 4).run();
 
         ArrayList<Integer> job = new ArrayList<>();
         for(int i=0; i<=50; i++) {
             job.add(i);
         }
         UsingExecutorsForJob usingExecutorsForJob = new UsingExecutorsForJob(job);
-        usingExecutorsForJob.doJob();
+        //usingExecutorsForJob.doJob();
+
+        UsingThreadsForJob usingThreadsForJob = new UsingThreadsForJob(job);
+        usingThreadsForJob.doJob();
     }
 }
 
@@ -71,51 +73,46 @@ class UsingExecutorsForJob {
 }
 
 class UsingThreadsForJob {
-    ArrayList<Integer> items;
-    ArrayList<Thread> threads;
-    int i;
+    ArrayList<Integer> job;
+    ArrayList<Thread> threads = new ArrayList<>();
+    int i=1;
 
-    public UsingThreadsForJob(int count, int threads) {
-        this.items = new ArrayList<Integer>(count);
-        this.threads = new ArrayList<>(4);
-
-        for (int i = 1; i <= count; i++) {
-            this.items.add(i);
-        }
+    public UsingThreadsForJob(ArrayList<Integer> job) {
+        this.job = job;
     }
 
     private synchronized void printNext() {
-        printItem(i);
-        i++;
-        notify();
+        if(i<=40 || Thread.currentThread().getName().equals("main")) {
+            /*  this is called double checked locking,
+                first condition is checked outside the synchronized block, then again
+                condition is checked inside the synchronized block
+             */
+            System.out.println(Thread.currentThread().getName()+" : "+ i + ": "+ job.get(i));
+            i++;
+        }
     }
 
-    private void printItem(int index) {
-        System.out.println(Thread.currentThread().getName() + "  :  " + index);
-    }
+    public void doJob() throws InterruptedException {
+        Runnable task = () -> {
+            while(i<=40) { // multiple threads passed this condition, before updation of i
+                printNext(); // only this is synchronised, multiple threads came to this line and waiting, before i is updated
+            }
+        };
 
-    void run() throws InterruptedException {
-        i = 0;
         while (i <= 10) {
             printNext();
         }
-        /**
-         * Current Problem: some numbers get printed twice
-         * Assignment: fix that.
-         */
 
-        // print 11 to 40 using 4 threads
-        for (int j = 0; j < 4; j++) {
-            threads.add(new Thread(() -> {
-                while (i <= 40) {
-                    printNext();
-                }
-            }));
+        for(int j=1; j<=5; j++) { // create 5 threads
+           Thread t = new Thread(task);
+           threads.add(t);
         }
 
-        threads.forEach(Thread::start);
+        for(Thread t: threads) {
+            t.start(); // this is forking multiple threads
+        }
         for (Thread thread : threads) {
-            thread.join();
+            thread.join(); // waiting for results of all threads, waiting for all threads to complete
         }
 
         // print 41-50 using single thread again
