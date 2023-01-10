@@ -1,7 +1,5 @@
 package threads;
 
-import java.util.Vector;
-
 public class Synchronisation {
 
     public static void main(String[] args) {
@@ -12,7 +10,7 @@ public class Synchronisation {
 
 
         /*
-            TODO lock monitor sync mutex
+            TODO lock monitor sync mutex, fork join for fanoutfanin problem
             syncWait1 and syncWait2 acquires a lock on task1 object, they can't run parallely
             syncWait1 and syncWait2 acquires a lock on task2 object, they can't run parallely
 
